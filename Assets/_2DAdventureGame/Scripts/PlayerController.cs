@@ -24,6 +24,9 @@ public class PlayerController : MonoBehaviour
     public float launchCooldown = 0.5f;
     float launchCooldownTimer;
 
+    public InputAction TalkAction;
+    private NonPlayerCharacter lastNonPlayerCharacter;
+
     void Start()
     {
         MoveAction.Enable();
@@ -33,6 +36,8 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
 
         currentHealth = maxHealth;
+
+        TalkAction.Enable();
     }
 
     void Update()
@@ -49,7 +54,6 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Look X", moveDirection.x);
         animator.SetFloat("Look Y", moveDirection.y);
         animator.SetFloat("Speed", move.magnitude);
-
 
         if (isInvincible)
         {
@@ -70,6 +74,30 @@ public class PlayerController : MonoBehaviour
         {
             Launch();
             launchCooldownTimer = launchCooldown;
+        }
+
+        RaycastHit2D hit = Physics2D.Raycast(
+            rigidbody2d.position + Vector2.up * 0.2f,
+            moveDirection,
+            1.5f,
+            LayerMask.GetMask("NPC")
+        );
+
+        if (hit.collider != null)
+        {
+            NonPlayerCharacter npc = hit.collider.GetComponent<NonPlayerCharacter>();
+            npc.dialogueBubble.SetActive(true);
+            lastNonPlayerCharacter = npc;
+
+            FindFriend(npc);
+        }
+        else
+        {
+            if (lastNonPlayerCharacter != null)
+            {
+                lastNonPlayerCharacter.dialogueBubble.SetActive(false);
+                lastNonPlayerCharacter = null;
+            }
         }
     }
 
@@ -101,7 +129,7 @@ public class PlayerController : MonoBehaviour
             maxHealth
         );
 
-        Debug.Log(currentHealth + "/" + maxHealth);
+        UIHandler.instance.SetHealthValue(currentHealth / (float)maxHealth);
     }
 
     void Launch()
@@ -112,12 +140,18 @@ public class PlayerController : MonoBehaviour
             Quaternion.identity
         );
 
-        Projectile projectile =
-            projectileObject.GetComponent<Projectile>();
-
+        Projectile projectile =projectileObject.GetComponent<Projectile>();
         projectile.Launch(moveDirection, 300);
 
         animator.SetTrigger("Launch");
+    }
+
+    void FindFriend(NonPlayerCharacter npc)
+    {
+        if (TalkAction.WasPressedThisFrame())
+        {
+            UIHandler.instance.DisplayDialogue(npc.dialogueText);
+        }
     }
 }
 

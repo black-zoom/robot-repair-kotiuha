@@ -1,0 +1,5 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Background" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/_2DAdventureGame/Art/Ducko/UI/UIDialogueBox.png?fileID=21300000&amp;guid=924827a9385ec3544b572966c8853b0a&amp;type=3#UIDialogueBox&quot;); background-color: rgba(255, 255, 255, 0); width: 100%; height: 100%;">
+        <ui:Label text="Press C to shoot cogs and help me fix these broken robots! Come speak to me when you’re finished!" enable-rich-text="true" name="DialogueText" style="width: 100%; height: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 35px; padding-right: 35px; padding-bottom: 35px; padding-left: 35px; -unity-font-style: bold; font-size: 25px; color: rgb(0, 0, 0); white-space: normal;"/>
+    </ui:VisualElement>
+</ui:UXML>
