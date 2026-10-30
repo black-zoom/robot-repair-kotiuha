@@ -75,29 +75,36 @@ public class PlayerController : MonoBehaviour
             Launch();
             launchCooldownTimer = launchCooldown;
         }
+        
+        Vector2 rayOrigin = rigidbody2d.position + Vector2.up * 0.2f;
+        Vector2 sideOffset = Vector2.Perpendicular(moveDirection) * 0.2f;
 
-        RaycastHit2D hit = Physics2D.Raycast(
-            rigidbody2d.position + Vector2.up * 0.2f,
+        RaycastHit2D hit1 = Physics2D.Raycast(
+            rayOrigin + sideOffset,
             moveDirection,
             1.5f,
             LayerMask.GetMask("NPC")
         );
 
-        if (hit.collider != null)
+        RaycastHit2D hit2 = Physics2D.Raycast(
+            rayOrigin - sideOffset,
+            moveDirection,
+            1.5f,
+            LayerMask.GetMask("NPC")
+        );
+
+        NonPlayerCharacter npc = GetNPC(hit1) ?? GetNPC(hit2);
+
+        if (npc != null)
         {
-            NonPlayerCharacter npc = hit.collider.GetComponent<NonPlayerCharacter>();
             npc.dialogueBubble.SetActive(true);
             lastNonPlayerCharacter = npc;
-
             FindFriend(npc);
         }
-        else
+        else if (lastNonPlayerCharacter != null)
         {
-            if (lastNonPlayerCharacter != null)
-            {
-                lastNonPlayerCharacter.dialogueBubble.SetActive(false);
-                lastNonPlayerCharacter = null;
-            }
+            lastNonPlayerCharacter.dialogueBubble.SetActive(false);
+            lastNonPlayerCharacter = null;
         }
     }
 
@@ -144,6 +151,13 @@ public class PlayerController : MonoBehaviour
         projectile.Launch(moveDirection, 300);
 
         animator.SetTrigger("Launch");
+    }
+
+    NonPlayerCharacter GetNPC(RaycastHit2D hit)
+    {
+        return hit.collider != null
+            ? hit.collider.GetComponent<NonPlayerCharacter>()
+            : null;
     }
 
     void FindFriend(NonPlayerCharacter npc)
