@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8994799541997497295}
   - component: {fileID: 8653881106445148093}
   - component: {fileID: 4271042678637767958}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ElectricZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 1
   m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 1
+  m_SpriteSortPoint: 0
 --- !u!61 &8653881106445148093
 BoxCollider2D:
   m_ObjectHideFlags: 0
