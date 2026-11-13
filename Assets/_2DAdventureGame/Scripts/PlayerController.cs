@@ -29,6 +29,10 @@ public class PlayerController : MonoBehaviour
     public InputAction TalkAction;
     private NonPlayerCharacter lastNonPlayerCharacter;
 
+    AudioSource audioSource;
+    public AudioClip hitSound;
+    public AudioClip launchSound;
+
     void Start()
     {
         MoveAction.Enable();
@@ -38,6 +42,7 @@ public class PlayerController : MonoBehaviour
         rigidbody2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         dashSystem = GetComponent<DashSystem>();
+        audioSource = GetComponent<AudioSource>();
 
         currentHealth = maxHealth;
 
@@ -148,6 +153,7 @@ public class PlayerController : MonoBehaviour
             isInvincible = true;
             damageCooldown = timeInvincible;
             animator.SetTrigger("Hit");
+            PlaySound(hitSound);
         }
 
         currentHealth = Mathf.Clamp(
@@ -171,6 +177,7 @@ public class PlayerController : MonoBehaviour
         projectile.Launch(moveDirection, 300);
 
         animator.SetTrigger("Launch");
+        PlaySound(launchSound);
     }
 
     NonPlayerCharacter GetNPC(RaycastHit2D hit)
@@ -185,6 +192,14 @@ public class PlayerController : MonoBehaviour
         if (TalkAction.WasPressedThisFrame())
         {
             UIHandler.instance.DisplayDialogue(npc.dialogueText);
+        }
+    }
+
+    public void PlaySound(AudioClip clip)
+    {
+        if (clip != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(clip);
         }
     }
 }

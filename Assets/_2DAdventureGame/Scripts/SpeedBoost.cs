@@ -5,6 +5,7 @@ public class SpeedBoost : MonoBehaviour
 {
     public float boostFactor = 1.5f;
     public float boostTime = 5.0f;
+    public AudioClip collectedClip;
 
     private bool isCollected = false;
 
@@ -18,6 +19,7 @@ public class SpeedBoost : MonoBehaviour
         }
 
         isCollected = true;
+        player.PlaySound(collectedClip);
 
         StartCoroutine(BoostPlayer(player));
     }
