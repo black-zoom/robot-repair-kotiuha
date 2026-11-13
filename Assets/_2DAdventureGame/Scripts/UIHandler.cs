@@ -13,6 +13,7 @@ public class UIHandler : MonoBehaviour
 
     private VisualElement m_WinScreen;
     private VisualElement m_LoseScreen;
+    private VisualElement m_StartScreen;
 
     private void Awake()
     {
@@ -40,6 +41,24 @@ public class UIHandler : MonoBehaviour
 
         m_DialogueLabel = m_NonPlayerDialogue
             .Q<Label>("DialogueText");
+
+        m_StartScreen = uiDocument.rootVisualElement
+            .Q<VisualElement>("StartScreenContainer");
+        Button startButton = uiDocument.rootVisualElement
+            .Q<Button>("StartButton");
+
+        if (m_StartScreen != null && startButton != null)
+        {
+            m_StartScreen.style.display = DisplayStyle.Flex;
+            Time.timeScale = 0f;
+            startButton.clicked += StartGame;
+        }
+    }
+
+    private void StartGame()
+    {
+        m_StartScreen.style.display = DisplayStyle.None;
+        Time.timeScale = 1f;
     }
 
     private void Update()
