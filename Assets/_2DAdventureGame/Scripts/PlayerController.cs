@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     Vector2 moveDirection = new Vector2(1, 0);
     Animator animator;
     public GameObject projectilePrefab;
+    public InputAction DashAction;
+    DashSystem dashSystem;
 
     public float speed = 3.0f;
 
@@ -31,9 +33,11 @@ public class PlayerController : MonoBehaviour
     {
         MoveAction.Enable();
         LaunchAction.Enable();
+        DashAction.Enable();
 
         rigidbody2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        dashSystem = GetComponent<DashSystem>();
 
         currentHealth = maxHealth;
 
@@ -106,12 +110,28 @@ public class PlayerController : MonoBehaviour
             lastNonPlayerCharacter.dialogueBubble.SetActive(false);
             lastNonPlayerCharacter = null;
         }
-    }
 
+        if (DashAction.WasPressedThisFrame())
+        {
+            dashSystem.StartDash(move);
+        }
+    }
+    
     void FixedUpdate()
     {
-        Vector2 position = (Vector2)rigidbody2d.position
-            + move * speed * Time.deltaTime;
+        Vector2 movement;
+
+        if (dashSystem != null && dashSystem.isDashing)
+        {
+            movement = dashSystem.dashDirection * dashSystem.dashSpeed;
+        }
+        else
+        {
+            movement = move * speed;
+        }
+
+        Vector2 position = rigidbody2d.position
+            + movement * Time.fixedDeltaTime;
 
         rigidbody2d.MovePosition(position);
     }
