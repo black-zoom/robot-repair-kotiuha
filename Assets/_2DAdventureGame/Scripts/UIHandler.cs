@@ -22,6 +22,8 @@ public class UIHandler : MonoBehaviour
 
     private void Start()
     {
+        Screen.SetResolution(Display.main.systemWidth, Display.main.systemHeight, FullScreenMode.FullScreenWindow);
+
         UIDocument uiDocument = GetComponent<UIDocument>();
 
         m_Healthbar = uiDocument.rootVisualElement
