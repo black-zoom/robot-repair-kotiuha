@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     DashSystem dashSystem;
 
     public float speed = 3.0f;
+    float baseSpeed;
 
     public int maxHealth = 5;
     public int health { get { return currentHealth; } }
@@ -30,8 +31,13 @@ public class PlayerController : MonoBehaviour
     private NonPlayerCharacter lastNonPlayerCharacter;
 
     AudioSource audioSource;
+    public AudioSource footstepAudioSource;
+
     public AudioClip hitSound;
     public AudioClip launchSound;
+
+    public float footstepDelay = 0.25f;
+    float footstepTimer;
 
     void Start()
     {
@@ -44,6 +50,7 @@ public class PlayerController : MonoBehaviour
         dashSystem = GetComponent<DashSystem>();
         audioSource = GetComponent<AudioSource>();
 
+        baseSpeed = speed;
         currentHealth = maxHealth;
 
         TalkAction.Enable();
@@ -63,6 +70,25 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Look X", moveDirection.x);
         animator.SetFloat("Look Y", moveDirection.y);
         animator.SetFloat("Speed", move.magnitude);
+
+        if (move.magnitude > 0.1f && (dashSystem == null || !dashSystem.isDashing))
+        {
+            footstepTimer -= Time.deltaTime;
+            if (footstepTimer <= 0f)
+            {
+                PlayFootstep();
+                float speedMultiplier = (speed > 0f && baseSpeed > 0f) ? (speed / baseSpeed) : 1f;
+                footstepTimer = footstepDelay / speedMultiplier;
+            }
+        }
+        else
+        {
+            footstepTimer = 0f;
+            if (footstepAudioSource != null && footstepAudioSource.isPlaying)
+            {
+                footstepAudioSource.Stop();
+            }
+        }
 
         if (isInvincible)
         {
@@ -202,5 +228,13 @@ public class PlayerController : MonoBehaviour
             audioSource.PlayOneShot(clip);
         }
     }
-}
 
+    void PlayFootstep()
+    {
+        if (footstepAudioSource != null)
+        {
+            footstepAudioSource.pitch = Random.Range(0.9f, 1.1f);
+            footstepAudioSource.Play();
+        }
+    }
+}

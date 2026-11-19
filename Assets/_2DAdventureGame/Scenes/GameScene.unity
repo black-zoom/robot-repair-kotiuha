@@ -19102,7 +19102,7 @@ Transform:
   m_GameObject: {fileID: 639958372}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.7033043, y: 9.259999, z: -10}
+  m_LocalPosition: {x: -7.190525, y: 9.259999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20052,6 +20052,9 @@ MonoBehaviour:
     m_Priority: 0
   hitSound: {fileID: 8300000, guid: c7d3a91ac32abbe47a8931a8ffc37bc6, type: 3}
   launchSound: {fileID: 8300000, guid: c87de0cae68cdbb409eec8ba23a860d0, type: 3}
+  footstepSound: {fileID: 8300000, guid: a0ccbead04ec99c4e9ddc660333de268, type: 3}
+  footstepDelay: 0.25
+  footstepVolume: 0.4
 --- !u!50 &757759763
 Rigidbody2D:
   serializedVersion: 5
