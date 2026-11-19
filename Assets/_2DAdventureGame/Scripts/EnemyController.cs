@@ -66,7 +66,7 @@ public class EnemyController : MonoBehaviour
         rigidbody2d.MovePosition(position);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerStay2D(Collider2D other)
     {
         PlayerController player =
             other.gameObject.GetComponent<PlayerController>();
