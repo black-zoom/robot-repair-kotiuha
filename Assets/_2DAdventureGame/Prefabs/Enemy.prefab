@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 635719800818675323}
   - component: {fileID: 1889544474907735465}
   - component: {fileID: -665443661238980608}
+  - component: {fileID: -8299951672908570038}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -304,3 +305,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-8299951672908570038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1432278914220012531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14bb3db95b488b68f92c45e0a4741c87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMoveAudio
+  minDistance: 1.5
+  maxDistance: 8
+  maxVolume: 0.8
+  walkSound: {fileID: 8300000, guid: 9645ade057726c6428a54cc571053c6d, type: 3}
