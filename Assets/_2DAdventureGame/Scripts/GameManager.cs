@@ -1,23 +1,20 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public PlayerController player;
-    EnemyController[] enemies;
     public UIHandler uiHandler;
+    public string mainMenuSceneName = "MainMenu";
+    public float returnDelay = 3.0f;
+
+    EnemyController[] enemies;
     bool gameOver;
 
     void Start()
     {
-        enemies = FindObjectsByType<EnemyController>(
-            FindObjectsSortMode.None);
-    }
-
-    void ReloadScene()
-    {
-        SceneManager.LoadScene(
-            SceneManager.GetActiveScene().name);
+        enemies = FindObjectsByType<EnemyController>(FindObjectsSortMode.None);
     }
 
     void Update()
@@ -27,17 +24,36 @@ public class GameManager : MonoBehaviour
 
         if (player.health <= 0)
         {
-            gameOver = true;
+            EndGame(true);
+        }
+        else if (AllEnemiesFixed())
+        {
+            EndGame(false);
+        }
+    }
+
+    void EndGame(bool isLose)
+    {
+        gameOver = true;
+        Time.timeScale = 0f;
+
+        if (isLose)
+        {
             uiHandler.DisplayLoseScreen();
-            Invoke(nameof(ReloadScene), 3f);
+        }
+        else
+        {
+            uiHandler.DisplayWinScreen();
         }
 
-        if (AllEnemiesFixed())
-        {
-            gameOver = true;
-            uiHandler.DisplayWinScreen();
-            Invoke(nameof(ReloadScene), 3f);
-        }
+        StartCoroutine(ReturnToMainMenu());
+    }
+
+    IEnumerator ReturnToMainMenu()
+    {
+        yield return new WaitForSecondsRealtime(returnDelay);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 
     bool AllEnemiesFixed()
