@@ -1,0 +1,56 @@
+.game-title {
+    font-size: 58px;
+    -unity-font-style: bold;
+    letter-spacing: 3px;
+    color: rgb(245, 250, 255);
+    -unity-text-align: middle-center;
+    text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
+    margin-bottom: 18px;
+}
+
+.game-goal {
+    font-size: 22px;
+    color: rgb(215, 232, 245);
+    -unity-text-align: middle-center;
+    white-space: normal;
+    max-width: 720px;
+
+    background-color: rgba(15, 23, 34, 0.8);
+    border-left-width: 4px;
+    border-left-color: rgb(72, 169, 214);
+    border-radius: 6px;
+    padding: 14px 28px;
+    margin-bottom: 48px;
+}
+
+.menu-button {
+    width: 320px;
+    height: 68px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    font-size: 26px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    color: rgb(240, 245, 250);
+    -unity-text-align: middle-center;
+
+    background-color: rgba(20, 30, 42, 0.9);
+    border-width: 2px;
+    border-color: rgb(72, 169, 214);
+    border-radius: 8px;
+
+    transition-property: background-color, border-color, scale;
+    transition-duration: 0.15s;
+}
+
+.menu-button:hover {
+    background-color: rgb(36, 58, 82);
+    border-color: rgb(135, 222, 255);
+    scale: 1.03 1.03;
+}
+
+.menu-button:active {
+    background-color: rgb(15, 22, 30);
+    scale: 0.98 0.98;
+}
