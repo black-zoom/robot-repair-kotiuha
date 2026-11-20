@@ -10,16 +10,20 @@ public class DashSystem : MonoBehaviour
     public float recoveryRate = 20f;
     public float recoveryDelay = 0.5f;
 
+    public AudioClip dashSound;
+
     public float currentStamina;
     public bool isDashing { get; private set; }
     public Vector2 dashDirection { get; private set; }
-
+    
+    AudioSource audioSource;
     float dashTimer;
     float recoveryTimer;
 
     void Start()
     {
         currentStamina = maxStamina;
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -62,5 +66,12 @@ public class DashSystem : MonoBehaviour
 
         currentStamina -= staminaCost;
         dashTimer = dashDuration;
+
+        if (audioSource != null && dashSound != null)
+        {
+            audioSource.pitch = Random.Range(0.95f, 1.05f);
+            audioSource.PlayOneShot(dashSound);
+            audioSource.pitch = 1f;
+        }
     }
 }
