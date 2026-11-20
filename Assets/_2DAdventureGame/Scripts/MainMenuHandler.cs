@@ -9,6 +9,7 @@ public class MainMenuHandler : MonoBehaviour
     public float fadeDuration = 0.5f;
 
     private Button m_StartButton;
+    private Button m_ExitButton;
     private VisualElement m_FadeOverlay;
     private bool m_IsTransitioning;
 
@@ -19,11 +20,17 @@ public class MainMenuHandler : MonoBehaviour
 
         UIDocument uiDocument = GetComponent<UIDocument>();
         m_StartButton = uiDocument.rootVisualElement.Q<Button>("StartButton");
+        m_ExitButton = uiDocument.rootVisualElement.Q<Button>("ExitButton");
         m_FadeOverlay = uiDocument.rootVisualElement.Q<VisualElement>("FadeOverlay");
 
         if (m_StartButton != null)
         {
             m_StartButton.clicked += OnStartClicked;
+        }
+
+        if (m_ExitButton != null)
+        {
+            m_ExitButton.clicked += OnExitClicked;
         }
     }
 
@@ -33,6 +40,19 @@ public class MainMenuHandler : MonoBehaviour
         m_IsTransitioning = true;
 
         StartCoroutine(TransitionToGame());
+    }
+
+    private void OnExitClicked()
+    {
+        if (m_IsTransitioning) return;
+        m_IsTransitioning = true;
+
+        Debug.Log("Exiting the game...");
+        Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 
     private IEnumerator TransitionToGame()
