@@ -22689,6 +22689,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1621666829}
     m_Modifications:
+    - target: {fileID: -8299951672908570038, guid: 9911b914f81b1f58fbead9466b4e746f,
+        type: 3}
+      propertyPath: fixSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 4e356d8e36201c14da953082c4d569ab, type: 3}
     - target: {fileID: 635719800818675323, guid: 9911b914f81b1f58fbead9466b4e746f,
         type: 3}
       propertyPath: speed

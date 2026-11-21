@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(AudioSource))]
 public class EnemyMoveAudio : MonoBehaviour
 {
     public float minDistance = 1.5f;
@@ -9,14 +8,17 @@ public class EnemyMoveAudio : MonoBehaviour
     [Range(0f, 1f)]
     public float maxVolume = 0.8f;
     public AudioClip walkSound;
+    public AudioClip fixSound;
 
-    private AudioSource audioSource;
+    public AudioSource walkAudioSource;
+    public AudioSource fixAudioSource;
+
     private EnemyController enemyController;
     private Transform playerTransform;
+    private bool fixSoundPlayed = false;
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
         enemyController = GetComponent<EnemyController>();
 
         PlayerController player = FindFirstObjectByType<PlayerController>();
@@ -25,43 +27,56 @@ public class EnemyMoveAudio : MonoBehaviour
             playerTransform = player.transform;
         }
 
-        if (walkSound != null)
+        if (walkSound != null && walkAudioSource != null)
         {
-            audioSource.clip = walkSound;
-            audioSource.loop = true;
-            audioSource.spatialBlend = 0f;
-            audioSource.volume = 0f;
-            audioSource.Play();
+            walkAudioSource.clip = walkSound;
+            walkAudioSource.loop = true;
+            walkAudioSource.spatialBlend = 0f;
+            walkAudioSource.volume = 0f;
+            walkAudioSource.Play();
         }
     }
 
     void Update()
     {
-        if (playerTransform == null || walkSound == null) return;
-
-        if (enemyController != null && !enemyController.isBroken)
-        {
-            if (audioSource.isPlaying)
-            {
-                audioSource.Stop();
-            }
-            return;
-        }
+        if (playerTransform == null) return;
 
         float distance = Vector2.Distance(transform.position, playerTransform.position);
+        float currentVolume = 0f;
 
         if (distance >= maxDistance)
         {
-            audioSource.volume = 0f;
+            currentVolume = 0f;
         }
         else if (distance <= minDistance)
         {
-            audioSource.volume = maxVolume;
+            currentVolume = maxVolume;
         }
         else
         {
             float t = (distance - minDistance) / (maxDistance - minDistance);
-            audioSource.volume = Mathf.Lerp(maxVolume, 0f, t);
+            currentVolume = Mathf.Lerp(maxVolume, 0f, t);
+        }
+
+        if (enemyController != null && !enemyController.isBroken)
+        {
+            if (walkAudioSource != null && walkAudioSource.isPlaying)
+            {
+                walkAudioSource.Stop();
+            }
+
+            if (!fixSoundPlayed && fixAudioSource != null && fixSound != null)
+            {
+                fixAudioSource.volume = currentVolume;
+                fixAudioSource.PlayOneShot(fixSound);
+                fixSoundPlayed = true;
+            }
+            return;
+        }
+
+        if (walkAudioSource != null)
+        {
+            walkAudioSource.volume = currentVolume;
         }
     }
 }

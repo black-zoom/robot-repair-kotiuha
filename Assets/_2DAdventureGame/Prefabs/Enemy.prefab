@@ -402,9 +402,6 @@ MonoBehaviour:
   speed: 0
   vertical: 0
   changeTime: 3
-  walkAudioSource: {fileID: -665443661238980608}
-  fixAudioSource: {fileID: -2229433178366183183}
-  fixSound: {fileID: 8300000, guid: 4e356d8e36201c14da953082c4d569ab, type: 3}
 --- !u!114 &-8299951672908570038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -421,3 +418,6 @@ MonoBehaviour:
   maxDistance: 8
   maxVolume: 0.8
   walkSound: {fileID: 8300000, guid: 9645ade057726c6428a54cc571053c6d, type: 3}
+  fixSound: {fileID: 8300000, guid: 4e356d8e36201c14da953082c4d569ab, type: 3}
+  walkAudioSource: {fileID: -665443661238980608}
+  fixAudioSource: {fileID: -2229433178366183183}
