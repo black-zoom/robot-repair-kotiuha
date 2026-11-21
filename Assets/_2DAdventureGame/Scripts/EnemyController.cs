@@ -8,8 +8,9 @@ public class EnemyController : MonoBehaviour
 
     Rigidbody2D rigidbody2d;
     Animator animator;
-    AudioSource audioSource;
-
+    
+    public AudioSource walkAudioSource;
+    public AudioSource fixAudioSource;
     public AudioClip fixSound;
 
     float timer;
@@ -23,7 +24,6 @@ public class EnemyController : MonoBehaviour
         rigidbody2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         timer = changeTime;
-        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -85,9 +85,14 @@ public class EnemyController : MonoBehaviour
         rigidbody2d.simulated = false;
         animator.SetTrigger("Fixed");
 
-        if (audioSource != null && fixSound != null)
+        if (walkAudioSource!= null)
         {
-            audioSource.PlayOneShot(fixSound);
+            walkAudioSource.Stop();
+        }
+        
+        if (fixAudioSource != null && fixSound != null)
+        {
+            fixAudioSource.PlayOneShot(fixSound);
         }
     }
 }
