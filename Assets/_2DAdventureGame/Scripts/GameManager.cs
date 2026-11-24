@@ -4,25 +4,30 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("References")]
     public PlayerController player;
     public UIHandler uiHandler;
+
+    [Header("Scene")]
     public string mainMenuSceneName = "MainMenu";
     public float returnDelay = 3.0f;
 
-    EnemyController[] enemies;
-    bool gameOver;
+    private EnemyController[] enemies;
+    private bool gameOver;
 
-    void Start()
+    private void Start()
     {
         enemies = FindObjectsByType<EnemyController>(FindObjectsSortMode.None);
     }
 
-    void Update()
+    private void Update()
     {
         if (gameOver)
+        {
             return;
+        }
 
-        if (player.health <= 0)
+        if (player != null && player.health <= 0)
         {
             EndGame(true);
         }
@@ -32,36 +37,46 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void EndGame(bool isLose)
+    private void EndGame(bool isLose)
     {
         gameOver = true;
         Time.timeScale = 0f;
 
-        if (isLose)
+        if (uiHandler != null)
         {
-            uiHandler.DisplayLoseScreen();
-        }
-        else
-        {
-            uiHandler.DisplayWinScreen();
+            if (isLose)
+            {
+                uiHandler.DisplayLoseScreen();
+            }
+            else
+            {
+                uiHandler.DisplayWinScreen();
+            }
         }
 
         StartCoroutine(ReturnToMainMenu());
     }
 
-    IEnumerator ReturnToMainMenu()
+    private IEnumerator ReturnToMainMenu()
     {
         yield return new WaitForSecondsRealtime(returnDelay);
         Time.timeScale = 1f;
-        SceneManager.LoadScene(mainMenuSceneName);
+        SceneManager.LoadSceneAsync(mainMenuSceneName);
     }
 
-    bool AllEnemiesFixed()
+    private bool AllEnemiesFixed()
     {
+        if (enemies == null || enemies.Length == 0)
+        {
+            return false;
+        }
+
         foreach (EnemyController enemy in enemies)
         {
-            if (enemy.isBroken)
+            if (enemy != null && enemy.isBroken)
+            {
                 return false;
+            }
         }
 
         return true;
