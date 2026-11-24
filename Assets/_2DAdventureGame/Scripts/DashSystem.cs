@@ -2,76 +2,101 @@ using UnityEngine;
 
 public class DashSystem : MonoBehaviour
 {
+    private const float MinDashPitch = 0.95f;
+    private const float MaxDashPitch = 1.05f;
+
+    [Header("Dash")]
     public float dashSpeed = 9f;
     public float dashDuration = 0.1f;
 
+    [Header("Stamina")]
     public float maxStamina = 100f;
     public float staminaCost = 50f;
     public float recoveryRate = 20f;
     public float recoveryDelay = 0.5f;
+    public float currentStamina;
 
+    [Header("Audio")]
     public AudioClip dashSound;
 
-    public float currentStamina;
     public bool isDashing { get; private set; }
     public Vector2 dashDirection { get; private set; }
-    
-    AudioSource audioSource;
-    float dashTimer;
-    float recoveryTimer;
+    public float StaminaNormalized => maxStamina > 0f
+        ? Mathf.Clamp01(currentStamina / maxStamina)
+        : 0f;
 
-    void Start()
+    private AudioSource audioSource;
+    private float dashTimer;
+    private float recoveryTimer;
+
+    private void Awake()
     {
-        currentStamina = maxStamina;
         audioSource = GetComponent<AudioSource>();
     }
 
-    void Update()
+    private void Start()
+    {
+        currentStamina = maxStamina;
+    }
+
+    private void Update()
     {
         if (isDashing)
         {
-            dashTimer -= Time.deltaTime;
-
-            if (dashTimer <= 0)
-            {
-                isDashing = false;
-                recoveryTimer = recoveryDelay;
-            }
-
+            UpdateDash();
             return;
         }
 
-        if (recoveryTimer > 0)
+        UpdateStaminaRecovery();
+    }
+
+    public void StartDash(Vector2 direction)
+    {
+        if (isDashing || currentStamina < staminaCost || direction.sqrMagnitude <= Mathf.Epsilon)
+        {
+            return;
+        }
+
+        isDashing = true;
+        dashDirection = direction.normalized;
+        currentStamina = Mathf.Max(0f, currentStamina - staminaCost);
+        dashTimer = dashDuration;
+
+        PlayDashSound();
+    }
+
+    private void UpdateDash()
+    {
+        dashTimer -= Time.deltaTime;
+        if (dashTimer <= 0f)
+        {
+            isDashing = false;
+            recoveryTimer = recoveryDelay;
+        }
+    }
+
+    private void UpdateStaminaRecovery()
+    {
+        if (recoveryTimer > 0f)
         {
             recoveryTimer -= Time.deltaTime;
             return;
         }
 
-        currentStamina = Mathf.Min(
-            currentStamina + recoveryRate * Time.deltaTime,
-            maxStamina
-        );
-    }
-    
-    public void StartDash(Vector2 direction)
-    {
-        if (isDashing || currentStamina < staminaCost)
-            return;
-
-        if (direction == Vector2.zero)
-            return;
-
-        isDashing = true;
-        dashDirection = direction.normalized;
-
-        currentStamina -= staminaCost;
-        dashTimer = dashDuration;
-
-        if (audioSource != null && dashSound != null)
+        if (currentStamina < maxStamina)
         {
-            audioSource.pitch = Random.Range(0.95f, 1.05f);
-            audioSource.PlayOneShot(dashSound);
-            audioSource.pitch = 1f;
+            currentStamina = Mathf.Min(currentStamina + recoveryRate * Time.deltaTime, maxStamina);
         }
+    }
+
+    private void PlayDashSound()
+    {
+        if (audioSource == null || dashSound == null)
+        {
+            return;
+        }
+
+        audioSource.pitch = Random.Range(MinDashPitch, MaxDashPitch);
+        audioSource.PlayOneShot(dashSound);
     }
 }
