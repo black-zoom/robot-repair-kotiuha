@@ -1,11 +1,19 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 public class MainMenuHandler : MonoBehaviour
 {
+    private const string StartButtonName = "StartButton";
+    private const string ExitButtonName = "ExitButton";
+    private const string FadeOverlayName = "FadeOverlay";
+    private const float MaxFadeDeltaTime = 0.05f;
+
+    [Header("Scene")]
     public string gameSceneName = "GameScene";
+
+    [Header("Transitions")]
     public float fadeDuration = 0.5f;
 
     private Button m_StartButton;
@@ -18,11 +26,33 @@ public class MainMenuHandler : MonoBehaviour
         Screen.SetResolution(Display.main.systemWidth, Display.main.systemHeight, FullScreenMode.FullScreenWindow);
         Time.timeScale = 1f;
 
-        UIDocument uiDocument = GetComponent<UIDocument>();
-        m_StartButton = uiDocument.rootVisualElement.Q<Button>("StartButton");
-        m_ExitButton = uiDocument.rootVisualElement.Q<Button>("ExitButton");
-        m_FadeOverlay = uiDocument.rootVisualElement.Q<VisualElement>("FadeOverlay");
+        InitializeUI();
+    }
 
+    private void OnDestroy()
+    {
+        UnregisterCallbacks();
+    }
+
+    private void InitializeUI()
+    {
+        UIDocument uiDocument = GetComponent<UIDocument>();
+        if (uiDocument == null || uiDocument.rootVisualElement == null)
+        {
+            Debug.LogError("MainMenuHandler: Missing UIDocument!");
+            return;
+        }
+
+        VisualElement root = uiDocument.rootVisualElement;
+        m_StartButton = root.Q<Button>(StartButtonName);
+        m_ExitButton = root.Q<Button>(ExitButtonName);
+        m_FadeOverlay = root.Q<VisualElement>(FadeOverlayName);
+
+        RegisterCallbacks();
+    }
+
+    private void RegisterCallbacks()
+    {
         if (m_StartButton != null)
         {
             m_StartButton.clicked += OnStartClicked;
@@ -34,20 +64,38 @@ public class MainMenuHandler : MonoBehaviour
         }
     }
 
+    private void UnregisterCallbacks()
+    {
+        if (m_StartButton != null)
+        {
+            m_StartButton.clicked -= OnStartClicked;
+        }
+
+        if (m_ExitButton != null)
+        {
+            m_ExitButton.clicked -= OnExitClicked;
+        }
+    }
+
     private void OnStartClicked()
     {
-        if (m_IsTransitioning) return;
-        m_IsTransitioning = true;
+        if (m_IsTransitioning)
+        {
+            return;
+        }
 
+        m_IsTransitioning = true;
         StartCoroutine(TransitionToGame());
     }
 
     private void OnExitClicked()
     {
-        if (m_IsTransitioning) return;
-        m_IsTransitioning = true;
+        if (m_IsTransitioning)
+        {
+            return;
+        }
 
-        Debug.Log("Exiting the game...");
+        m_IsTransitioning = true;
         Application.Quit();
 
 #if UNITY_EDITOR
@@ -57,25 +105,22 @@ public class MainMenuHandler : MonoBehaviour
 
     private IEnumerator TransitionToGame()
     {
-        yield return null;
-
-        float timer = 0f;
-        while (timer < fadeDuration)
+        if (m_FadeOverlay != null && fadeDuration > 0f)
         {
-            timer += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
-            if (m_FadeOverlay != null)
+            yield return null;
+
+            float timer = 0f;
+            while (timer < fadeDuration)
             {
+                timer += Mathf.Min(Time.unscaledDeltaTime, MaxFadeDeltaTime);
                 m_FadeOverlay.style.opacity = Mathf.Clamp01(timer / fadeDuration);
+                yield return null;
             }
+
+            m_FadeOverlay.style.opacity = 1f;
             yield return null;
         }
 
-        if (m_FadeOverlay != null)
-        {
-            m_FadeOverlay.style.opacity = 1f;
-        }
-
-        yield return null;
         SceneManager.LoadSceneAsync(gameSceneName);
     }
 }
