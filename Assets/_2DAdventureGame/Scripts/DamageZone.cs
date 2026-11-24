@@ -4,15 +4,11 @@ public class DamageZone : MonoBehaviour
 {
     public int damage = 1;
 
-    void OnTriggerStay2D(Collider2D other)
+    private void OnTriggerStay2D(Collider2D other)
     {
-        PlayerController controller =
-            other.GetComponent<PlayerController>();
-
-        if (controller != null)
+        if (other.TryGetComponent(out PlayerController controller))
         {
             controller.ChangeHealth(-damage);
         }
     }
 }
-
