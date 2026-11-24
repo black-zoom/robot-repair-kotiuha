@@ -14,7 +14,7 @@ public class MainMenuHandler : MonoBehaviour
     public string gameSceneName = "GameScene";
 
     [Header("Transitions")]
-    public float fadeDuration = 0.5f;
+    public float fadeDuration = 0.35f;
 
     private Button m_StartButton;
     private Button m_ExitButton;
@@ -105,6 +105,15 @@ public class MainMenuHandler : MonoBehaviour
 
     private IEnumerator TransitionToGame()
     {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(gameSceneName);
+        if (asyncLoad == null)
+        {
+            m_IsTransitioning = false;
+            yield break;
+        }
+
+        asyncLoad.allowSceneActivation = false;
+
         if (m_FadeOverlay != null && fadeDuration > 0f)
         {
             yield return null;
@@ -118,9 +127,13 @@ public class MainMenuHandler : MonoBehaviour
             }
 
             m_FadeOverlay.style.opacity = 1f;
+        }
+
+        while (asyncLoad.progress < 0.9f)
+        {
             yield return null;
         }
 
-        SceneManager.LoadSceneAsync(gameSceneName);
+        asyncLoad.allowSceneActivation = true;
     }
 }
